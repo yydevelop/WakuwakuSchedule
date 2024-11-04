@@ -1,20 +1,52 @@
 package com.example.wakuwakuschedule
 
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import java.util.*
 
-class NotificationActivity : AppCompatActivity() {
+class NotificationActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
+
+    private lateinit var tts: TextToSpeech
+    private lateinit var alarmMessageTextView: TextView
+    private var alarmMessage: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
 
-        // Intentからメッセージを取得
-        val message = intent.getStringExtra("alarm_message") ?: "No message"
+        // インテントからメッセージを取得
+        alarmMessage = intent.getStringExtra("alarm_message")
 
-        // TextViewにメッセージを表示
-        val messageTextView: TextView = findViewById(R.id.message_text_view)
-        messageTextView.text = message
+        // テキストビューにメッセージを表示
+        alarmMessageTextView = findViewById(R.id.message_text_view)
+        alarmMessageTextView.text = alarmMessage
+
+        // TextToSpeechの初期化
+        tts = TextToSpeech(this, this)
+    }
+
+    override fun onInit(status: Int) {
+        if (status == TextToSpeech.SUCCESS) {
+            // 言語の設定
+            tts.language = Locale.JAPANESE
+            speakOut()
+        }
+    }
+
+    private fun speakOut() {
+        alarmMessage?.let {
+            tts.speak(it, TextToSpeech.QUEUE_FLUSH, null, null)
+        }
+    }
+
+    override fun onDestroy() {
+        // TextToSpeechのリソース解放
+        if (::tts.isInitialized) {
+            tts.stop()
+            tts.shutdown()
+        }
+        super.onDestroy()
     }
 }
