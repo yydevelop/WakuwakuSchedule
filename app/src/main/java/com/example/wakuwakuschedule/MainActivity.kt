@@ -120,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                 val message = messageEditText.text.toString()
                 if (message.isNotEmpty() && timeButton.text != "選択") {
                     val alarmTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                    scheduleAlarm(selectedHour, selectedMinute, message)
+                    scheduleRepeatingAlarm(selectedHour, selectedMinute, message)
                     alarmList.add(AlarmItem(alarmTime, message))
                     alarmAdapter.notifyDataSetChanged()
                     saveAlarmList()
@@ -133,11 +133,15 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("ScheduleExactAlarm")
-    private fun scheduleAlarm(hour: Int, minute: Int, message: String) {
+    private fun scheduleRepeatingAlarm(hour: Int, minute: Int, message: String) {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
             set(Calendar.SECOND, 0)
+            set(Calendar.MILLISECOND, 0)
+            if (before(Calendar.getInstance())) {
+                add(Calendar.DAY_OF_MONTH, 1) // 今日の時刻を過ぎている場合は翌日に設定
+            }
         }
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
@@ -151,7 +155,15 @@ class MainActivity : AppCompatActivity() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
+        // 毎日繰り返しアラームを設定 (24時間ごと)
+        alarmManager.setRepeating(
+            AlarmManager.RTC_WAKEUP,
+            calendar.timeInMillis,
+            AlarmManager.INTERVAL_DAY, // 24時間ごとに繰り返し
+            pendingIntent
+        )
+
+        Toast.makeText(this, "アラームが設定されました: ${String.format("%02d:%02d", hour, minute)}", Toast.LENGTH_SHORT).show()
     }
 
     private fun removeAlarm(position: Int) {
