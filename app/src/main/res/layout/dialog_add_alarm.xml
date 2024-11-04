@@ -1,18 +1,19 @@
+<!-- dialog_add_alarm.xml -->
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical"
-    android:padding="8dp">
+    android:padding="16dp">
 
-    <TextView
-        android:id="@+id/time_text_view"
+    <EditText
+        android:id="@+id/message_edit_text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:hint="メッセージを入力" />
+
+    <Button
+        android:id="@+id/time_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Time" />
-
-    <TextView
-        android:id="@+id/message_text_view"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Message" />
+        android:text="選択" />
 </LinearLayout>

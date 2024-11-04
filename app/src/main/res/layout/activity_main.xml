@@ -1,38 +1,37 @@
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<!-- activity_main.xml -->
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:orientation="vertical">
 
     <TextView
         android:id="@+id/permission_status_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="権限のステータスを確認中..."
-        android:padding="8dp" />
+        android:text="権限の状態を表示" />
 
     <Button
         android:id="@+id/request_permission_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="権限をリクエスト" />
-
-    <Button
-        android:id="@+id/set_alarm_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="アラームを設定" />
-
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="設定されたアラーム:"
-        android:paddingTop="16dp" />
+        android:text="権限リクエスト" />
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/alarm_recycler_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp" />
+        android:layout_below="@id/request_permission_button"
+        android:layout_marginTop="16dp" />
 
-</LinearLayout>
+    <!-- 右下に配置されたFloatingActionButton -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_alarm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:contentDescription="Add Alarm"
+        app:srcCompat="@android:drawable/ic_input_add" />
+</RelativeLayout>
