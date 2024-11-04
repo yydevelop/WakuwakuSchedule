@@ -90,7 +90,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun showAddAlarmDialog() {
-        // ダイアログビューの設定
         val dialogView = LayoutInflater.from(this).inflate(R.layout.dialog_add_alarm, null)
         val messageEditText: EditText = dialogView.findViewById(R.id.message_edit_text)
         val timeButton: Button = dialogView.findViewById(R.id.time_button)
@@ -98,7 +97,6 @@ class MainActivity : AppCompatActivity() {
         var selectedHour = 0
         var selectedMinute = 0
 
-        // 時刻選択ボタンの設定
         timeButton.setOnClickListener {
             val calendar = Calendar.getInstance()
             val hour = calendar.get(Calendar.HOUR_OF_DAY)
@@ -111,7 +109,6 @@ class MainActivity : AppCompatActivity() {
             }, hour, minute, true).show()
         }
 
-        // ダイアログの設定
         AlertDialog.Builder(this)
             .setTitle("新しいアラームを追加")
             .setView(dialogView)
@@ -119,10 +116,10 @@ class MainActivity : AppCompatActivity() {
                 val message = messageEditText.text.toString()
                 if (message.isNotEmpty() && timeButton.text != "選択") {
                     val alarmTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                    scheduleAlarm(selectedHour, selectedMinute)
+                    scheduleAlarm(selectedHour, selectedMinute, message) // メッセージを渡す
                     alarmList.add(AlarmItem(alarmTime, message))
                     alarmAdapter.notifyDataSetChanged()
-                    saveAlarmList() // アラームリストを保存
+                    saveAlarmList()
                 } else {
                     Toast.makeText(this, "メッセージと時刻を入力してください", Toast.LENGTH_SHORT).show()
                 }
@@ -132,7 +129,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     @SuppressLint("ScheduleExactAlarm")
-    private fun scheduleAlarm(hour: Int, minute: Int) {
+    private fun scheduleAlarm(hour: Int, minute: Int, message: String) {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
             set(Calendar.MINUTE, minute)
@@ -140,7 +137,9 @@ class MainActivity : AppCompatActivity() {
         }
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
-        val intent = Intent(this, AlarmReceiver::class.java)
+        val intent = Intent(this, AlarmReceiver::class.java).apply {
+            putExtra("alarm_message", message) // メッセージをIntentに追加
+        }
         val pendingIntent = PendingIntent.getBroadcast(
             this,
             alarmList.size,
@@ -152,6 +151,7 @@ class MainActivity : AppCompatActivity() {
 
         Toast.makeText(this, "アラームが設定されました: ${String.format("%02d:%02d", hour, minute)}", Toast.LENGTH_SHORT).show()
     }
+
 
     private fun saveAlarmList() {
         val sharedPreferences = getSharedPreferences("wakuwaku_prefs", Context.MODE_PRIVATE)

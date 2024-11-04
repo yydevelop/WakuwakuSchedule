@@ -6,9 +6,14 @@ import android.content.Intent
 
 class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
-        // 必要なアクティビティの起動などをここに記述
-        val activityIntent = Intent(context, NotificationActivity::class.java)
-        activityIntent.flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+        // メッセージを受け取る
+        val message = intent.getStringExtra("alarm_message") ?: "No message"
+
+        // NotificationActivityを起動し、メッセージを渡す
+        val activityIntent = Intent(context, NotificationActivity::class.java).apply {
+            flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TASK
+            putExtra("alarm_message", message)
+        }
         context.startActivity(activityIntent)
     }
 }

@@ -15,6 +15,8 @@
         android:id="@+id/request_permission_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_below="@id/permission_status_text_view"
+        android:layout_marginTop="8dp"
         android:text="権限リクエスト" />
 
     <androidx.recyclerview.widget.RecyclerView

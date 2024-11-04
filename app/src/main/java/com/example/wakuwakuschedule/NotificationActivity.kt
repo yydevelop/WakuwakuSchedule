@@ -1,9 +1,8 @@
-// NotificationActivity.kt
 package com.example.wakuwakuschedule
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 
 class NotificationActivity : AppCompatActivity() {
 
@@ -11,8 +10,11 @@ class NotificationActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_notification)
 
-        val message = intent.getStringExtra("ALARM_MESSAGE") ?: "アラーム通知"
-        val messageTextView = findViewById<TextView>(R.id.messageTextView)
+        // Intentからメッセージを取得
+        val message = intent.getStringExtra("alarm_message") ?: "No message"
+
+        // TextViewにメッセージを表示
+        val messageTextView: TextView = findViewById(R.id.message_text_view)
         messageTextView.text = message
     }
 }
