@@ -1,14 +1,12 @@
 package com.example.wakuwakuschedule
 
-import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlarmManager
 import android.app.PendingIntent
 import android.app.TimePickerDialog
 import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -17,8 +15,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import java.util.*
@@ -39,6 +35,7 @@ class MainActivity : AppCompatActivity() {
     private val requestPermissionsLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) {
+        // Re-check permissions status after the request
         checkPermissionsStatus()
     }
 
@@ -53,7 +50,7 @@ class MainActivity : AppCompatActivity() {
 
         checkPermissionsStatus()
 
-        // RecyclerViewのセットアップ
+        // Set up RecyclerView
         alarmAdapter = AlarmAdapter(alarmList)
         alarmRecyclerView.layoutManager = LinearLayoutManager(this)
         alarmRecyclerView.adapter = alarmAdapter
@@ -70,14 +67,6 @@ class MainActivity : AppCompatActivity() {
     private fun checkPermissionsStatus() {
         val permissionsNeeded = mutableListOf<String>()
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                permissionsNeeded.add("通知の権限")
-            }
-        }
-
         if (!Settings.canDrawOverlays(this)) {
             permissionsNeeded.add("他のアプリの上に表示する権限")
         }
@@ -90,20 +79,19 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun requestMissingPermissions() {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
-            if (ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-                != PackageManager.PERMISSION_GRANTED
-            ) {
-                ActivityCompat.requestPermissions(this, arrayOf(Manifest.permission.POST_NOTIFICATIONS), 1)
-            }
-        }
-
         if (!Settings.canDrawOverlays(this)) {
             val intent = Intent(
                 Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
                 Uri.parse("package:$packageName")
             )
-            requestPermissionsLauncher.launch(intent)
+            try {
+                requestPermissionsLauncher.launch(intent)
+            } catch (e: Exception) {
+                Toast.makeText(this, "権限リクエストに失敗しました", Toast.LENGTH_SHORT).show()
+                Log.e(TAG, "Failed to launch overlay permission intent", e)
+            }
+        } else {
+            Toast.makeText(this, "すでに必要な権限が付与されています", Toast.LENGTH_SHORT).show()
         }
     }
 
@@ -120,6 +108,7 @@ class MainActivity : AppCompatActivity() {
         }, hour, minute, true).show()
     }
 
+    @SuppressLint("ScheduleExactAlarm")
     private fun scheduleAlarm(hour: Int, minute: Int) {
         val calendar = Calendar.getInstance().apply {
             set(Calendar.HOUR_OF_DAY, hour)
