@@ -8,6 +8,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.SystemClock
@@ -24,6 +25,7 @@ class MainActivity : AppCompatActivity() {
     companion object {
         const val CHANNEL_ID = "alarm_channel_id"
         const val TAG = "WakuwakuSchedule"
+        const val REQUEST_CODE_OVERLAY_PERMISSION = 100
     }
 
     private val NOTIFICATION_PERMISSION_REQUEST_CODE = 1
@@ -42,6 +44,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
         createNotificationChannel()
 
+        requestOverlayPermission() // 「他のアプリの上に重ねて表示」権限をリクエスト
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             if (ContextCompat.checkSelfPermission(
                     this,
@@ -58,6 +62,18 @@ class MainActivity : AppCompatActivity() {
             }
         } else {
             checkAndScheduleAlarm()
+        }
+    }
+
+    private fun requestOverlayPermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if (!Settings.canDrawOverlays(this)) {
+                val intent = Intent(
+                    Settings.ACTION_MANAGE_OVERLAY_PERMISSION,
+                    Uri.parse("package:$packageName")
+                )
+                startActivityForResult(intent, REQUEST_CODE_OVERLAY_PERMISSION)
+            }
         }
     }
 
@@ -140,6 +156,18 @@ class MainActivity : AppCompatActivity() {
             } else {
                 Log.d(TAG, "Notification permission denied")
                 // 必要に応じてユーザーに通知
+            }
+        }
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == REQUEST_CODE_OVERLAY_PERMISSION) {
+            if (Settings.canDrawOverlays(this)) {
+                Log.d(TAG, "Overlay permission granted")
+            } else {
+                Log.d(TAG, "Overlay permission denied")
+                // 権限が付与されなかった場合、ユーザーに通知などの対応を追加
             }
         }
     }
