@@ -1,27 +1,40 @@
-<?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical"
-    android:padding="16dp">
+    android:paddingTop="16dp"> <!-- 上に余白を追加 -->
 
     <TextView
         android:id="@+id/permission_status_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="権限ステータス"
-        android:textSize="18sp" />
+        android:text="権限の状態を表示"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/request_permission_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="権限をリクエスト" />
+        android:text="権限リクエスト"
+        android:layout_below="@id/permission_status_text_view"
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" /> <!-- 初期状態で非表示 -->
 
-    <Button
-        android:id="@+id/set_alarm_button"
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/alarm_recycler_view"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/request_permission_button"
+        android:layout_marginTop="16dp" />
+
+    <!-- 右下に配置されたFloatingActionButton -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_alarm_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="アラームを設定" />
-
-</LinearLayout>
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_margin="16dp"
+        android:contentDescription="Add Alarm"
+        app:srcCompat="@android:drawable/ic_input_add" />
+</RelativeLayout>
