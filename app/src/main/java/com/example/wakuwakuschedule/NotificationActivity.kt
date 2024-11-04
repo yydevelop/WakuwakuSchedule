@@ -18,7 +18,7 @@ class NotificationActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         setContentView(R.layout.activity_notification)
 
         // インテントからメッセージを取得
-        alarmMessage = intent.getStringExtra("ALARM_MESSAGE")
+        alarmMessage = intent.getStringExtra("alarm_message")
 
         alarmMessageTextView = findViewById(R.id.message_text_view)
         alarmMessageTextView.text = alarmMessage
