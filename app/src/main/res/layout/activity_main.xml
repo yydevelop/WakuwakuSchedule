@@ -1,14 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:gravity="center">
+    android:padding="16dp">
 
-    <!-- メッセージ表示用のTextView -->
     <TextView
-        android:id="@+id/messageTextView"
+        android:id="@+id/permission_status_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="メッセージがここに表示されます" />
+        android:text="権限ステータス"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/request_permission_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="権限をリクエスト" />
+
+    <Button
+        android:id="@+id/set_alarm_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="アラームを設定" />
 
 </LinearLayout>
