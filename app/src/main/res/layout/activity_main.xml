@@ -1,23 +1,24 @@
-<!-- activity_main.xml -->
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:paddingTop="16dp"> <!-- 上に余白を追加 -->
 
     <TextView
         android:id="@+id/permission_status_text_view"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="権限の状態を表示" />
+        android:text="権限の状態を表示"
+        android:layout_marginBottom="8dp" />
 
     <Button
         android:id="@+id/request_permission_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:text="権限リクエスト"
         android:layout_below="@id/permission_status_text_view"
-        android:layout_marginTop="8dp"
-        android:text="権限リクエスト" />
+        android:layout_marginBottom="16dp"
+        android:visibility="gone" /> <!-- 初期状態で非表示 -->
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/alarm_recycler_view"

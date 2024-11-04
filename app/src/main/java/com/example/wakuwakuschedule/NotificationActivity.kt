@@ -5,6 +5,7 @@ import android.speech.tts.TextToSpeech
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
 import java.util.*
+import android.widget.Button
 
 class NotificationActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
 
@@ -17,14 +18,19 @@ class NotificationActivity : AppCompatActivity(), TextToSpeech.OnInitListener {
         setContentView(R.layout.activity_notification)
 
         // インテントからメッセージを取得
-        alarmMessage = intent.getStringExtra("alarm_message")
+        alarmMessage = intent.getStringExtra("ALARM_MESSAGE")
 
-        // テキストビューにメッセージを表示
         alarmMessageTextView = findViewById(R.id.message_text_view)
         alarmMessageTextView.text = alarmMessage
 
         // TextToSpeechの初期化
         tts = TextToSpeech(this, this)
+
+        // 閉じるボタンの設定
+        val closeButton: Button = findViewById(R.id.close_button)
+        closeButton.setOnClickListener {
+            finish() // Activityを閉じる
+        }
     }
 
     override fun onInit(status: Int) {

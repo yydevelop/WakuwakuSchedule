@@ -24,7 +24,6 @@ import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import java.util.*
 
-
 class MainActivity : AppCompatActivity() {
 
     companion object {
@@ -55,13 +54,16 @@ class MainActivity : AppCompatActivity() {
         alarmRecyclerView = findViewById(R.id.alarm_recycler_view)
         addAlarmButton = findViewById(R.id.add_alarm_button)
 
-        // 保存されたアラームリストを読み込む
         loadAlarmList()
 
-        // RecyclerViewのセットアップ
-        alarmAdapter = AlarmAdapter(alarmList)
+        alarmAdapter = AlarmAdapter(alarmList) { position ->
+            removeAlarm(position)
+        }
+
         alarmRecyclerView.layoutManager = LinearLayoutManager(this)
         alarmRecyclerView.adapter = alarmAdapter
+
+        checkPermissionsStatus()
 
         requestPermissionButton.setOnClickListener {
             requestMissingPermissions()
@@ -75,8 +77,10 @@ class MainActivity : AppCompatActivity() {
     private fun checkPermissionsStatus() {
         if (!Settings.canDrawOverlays(this)) {
             permissionStatusTextView.text = "他のアプリの上に表示する権限が必要です"
+            requestPermissionButton.visibility = Button.VISIBLE
         } else {
             permissionStatusTextView.text = "すべての必要な権限が付与されています"
+            requestPermissionButton.visibility = Button.GONE
         }
     }
 
@@ -116,7 +120,7 @@ class MainActivity : AppCompatActivity() {
                 val message = messageEditText.text.toString()
                 if (message.isNotEmpty() && timeButton.text != "選択") {
                     val alarmTime = String.format("%02d:%02d", selectedHour, selectedMinute)
-                    scheduleAlarm(selectedHour, selectedMinute, message) // メッセージを渡す
+                    scheduleAlarm(selectedHour, selectedMinute, message)
                     alarmList.add(AlarmItem(alarmTime, message))
                     alarmAdapter.notifyDataSetChanged()
                     saveAlarmList()
@@ -138,7 +142,7 @@ class MainActivity : AppCompatActivity() {
 
         val alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
         val intent = Intent(this, AlarmReceiver::class.java).apply {
-            putExtra("alarm_message", message) // メッセージをIntentに追加
+            putExtra("alarm_message", message)
         }
         val pendingIntent = PendingIntent.getBroadcast(
             this,
@@ -148,10 +152,13 @@ class MainActivity : AppCompatActivity() {
         )
 
         alarmManager.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, calendar.timeInMillis, pendingIntent)
-
-        Toast.makeText(this, "アラームが設定されました: ${String.format("%02d:%02d", hour, minute)}", Toast.LENGTH_SHORT).show()
     }
 
+    private fun removeAlarm(position: Int) {
+        alarmList.removeAt(position)
+        alarmAdapter.notifyDataSetChanged()
+        saveAlarmList()
+    }
 
     private fun saveAlarmList() {
         val sharedPreferences = getSharedPreferences("wakuwaku_prefs", Context.MODE_PRIVATE)
@@ -166,9 +173,8 @@ class MainActivity : AppCompatActivity() {
         val json = sharedPreferences.getString(ALARM_LIST_KEY, null)
         if (json != null) {
             val type = object : TypeToken<MutableList<AlarmItem>>() {}.type
-            val loadedList: MutableList<AlarmItem> = gson.fromJson(json, type)
             alarmList.clear()
-            alarmList.addAll(loadedList)
+            alarmList.addAll(gson.fromJson(json, type))
         }
     }
 }
