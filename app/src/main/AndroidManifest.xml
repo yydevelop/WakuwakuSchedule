@@ -39,6 +39,15 @@
             </intent-filter>
         </activity>
 
+        <!-- 通知用画面のアクティビティ -->
+        <activity
+            android:name=".NotificationActivity"
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
+            android:exported="true"
+            android:showWhenLocked="true"
+            android:turnScreenOn="true"
+            android:launchMode="singleTop" />
+
     </application>
 
 </manifest>
